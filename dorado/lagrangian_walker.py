@@ -467,7 +467,7 @@ def steep_descent(probs):
     return idx
 
 
-def particle_stepper(Particles, current_inds, travel_times):
+def particle_stepper(Particles, current_inds, travel_times, island_flag, ROI=None):
     """Step particles a single iteration.
 
     **Inputs** :
@@ -481,6 +481,14 @@ def particle_stepper(Particles, current_inds, travel_times):
         travel_times : `list`
             List of initial travel times for the particles
 
+        island_flags : 'list'
+            List of initial island flags for the particles
+            
+        ROI : 'np.array' , optional
+            A binary raster indicating cells within a specified ROI.
+            If not provided, the function will use the ROI stored
+            in the Particles object (if any).
+
     **Outputs** :
 
         new_inds : `list`
@@ -488,8 +496,15 @@ def particle_stepper(Particles, current_inds, travel_times):
 
         travel_times : `list`
             List of the travel times associated with the particle movements
+            
+        island_flags : 'list'
+            List of the flags associated with the particle movements
 
     """
+    # If no ROI is explicitly passed, try to use the one stored in Particles to monitor particle movement in certain areas
+    if ROI is None:
+        ROI = Particles.ROI
+        
     inds = current_inds  # get indices as coordinates in the domain
     # split the indices into tuples
     inds_tuple = [(inds[i][0], inds[i][1]) for i in range(len(inds))]
@@ -521,5 +536,20 @@ def particle_stepper(Particles, current_inds, travel_times):
     travel_times = [travel_times[i] + temp_travel[i]
                     for i in range(0, len(travel_times))]
     travel_times = list(travel_times)
+    
+    # Check if particles moved into the region of interest
+    if ROI is not None:
+        new_flags = []
+        for (x, y) in new_inds:
+            # Ensure x, y are within the bounds of the raster (ROI)
+            if (0 <= y < ROI.shape[0]) and (0 <= x < ROI.shape[1]):
+                # Use the binary raster to flag particles
+                if ROI[y, x] == 1:  # Particle is within ROI
+                    new_flags.append(1)
+                else:  # Particle is outside ROI
+                    new_flags.append(0)
+            else:  # If particle is outside the bounds of the raster
+                new_flags.append(0)
+        island_flags = new_flags
 
-    return new_inds, travel_times
+    return new_inds, travel_times, island_flags
