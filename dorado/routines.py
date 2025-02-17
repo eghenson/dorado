@@ -396,7 +396,7 @@ def get_state(walk_data, iteration=-1, verbose=True):
     **Inputs** :
 
         walk_data : `dict`
-            Dictionary of all x and y locations and travel times
+            Dictionary of all x and y locations,travel times, and flags
 
         iteration : `int`, optional
             Iteration number at which to slice the dictionary. Defaults
@@ -418,6 +418,10 @@ def get_state(walk_data, iteration=-1, verbose=True):
         times : `list`
             List containing equivalent of
             walk_data['travel_times'][:][iteration]
+            
+        flags: 'list'
+            List containing equivalent of
+            walk_data['island_flags'][:][iteration]
 
     """
     iteration = int(iteration)
@@ -426,6 +430,7 @@ def get_state(walk_data, iteration=-1, verbose=True):
     xinds = []
     yinds = []
     times = []
+    flags = []
     iter_exceeds_warning = 0
     # Pull out the specified value
     for ii in list(range(Np_tracer)):
@@ -433,11 +438,13 @@ def get_state(walk_data, iteration=-1, verbose=True):
             xinds.append(walk_data['xinds'][ii][iteration])
             yinds.append(walk_data['yinds'][ii][iteration])
             times.append(walk_data['travel_times'][ii][iteration])
+            flags.append(walk_data['island_flags'][ii][iteration])
         except IndexError:
             # If target iter exceeds walk history, return last iter
             xinds.append(walk_data['xinds'][ii][-1])
             yinds.append(walk_data['yinds'][ii][-1])
             times.append(walk_data['travel_times'][ii][-1])
+            flags.append(walk_data['island_flags'][ii][-1])
             iter_exceeds_warning += 1
 
     if iter_exceeds_warning > 0:
@@ -445,7 +452,7 @@ def get_state(walk_data, iteration=-1, verbose=True):
             print('Note: %s particles have not reached %s iterations' % \
                   (iter_exceeds_warning, iteration))
 
-    return xinds, yinds, times
+    return xinds, yinds, times, flags
 
 
 def get_time_state(walk_data, target_time, verbose=True):
