@@ -467,7 +467,7 @@ def steep_descent(probs):
     return idx
 
 
-def particle_stepper(Particles, current_inds, travel_times, island_flag, ROI=None):
+def particle_stepper(Particles, current_inds, travel_times, island_flags, ROI=None):
     """Step particles a single iteration.
 
     **Inputs** :
