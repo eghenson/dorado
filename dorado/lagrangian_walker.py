@@ -536,15 +536,15 @@ def particle_stepper(Particles, current_inds, travel_times, island_flags, ROI=No
     travel_times = [travel_times[i] + temp_travel[i]
                     for i in range(0, len(travel_times))]
     travel_times = list(travel_times)
-    
+
     # Check if particles moved into the region of interest
     if ROI is not None:
         new_flags = []
         for (x, y) in new_inds:
             # Ensure x, y are within the bounds of the raster (ROI)
-            if (0 <= y < ROI.shape[0]) and (0 <= x < ROI.shape[1]):
-                # Use the binary raster to flag particles
-                if ROI[y, x] == 1:  # Particle is within ROI
+            if (0 <= x < ROI.shape[0]) and (0 <= y < ROI.shape[1]):
+            # Use the binary raster to flag particles
+                if ROI[x, y] == 1:  # Particle is within ROI (river)
                     new_flags.append(1)
                 else:  # Particle is outside ROI
                     new_flags.append(0)
