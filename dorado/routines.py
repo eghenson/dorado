@@ -422,6 +422,11 @@ def get_state(walk_data, iteration=-1, verbose=True):
         flags: 'list'
             List containing equivalent of
             walk_data['island_flags'][:][iteration]
+           
+        depths: 'list'
+            List containing equivalent of
+            walk_data['depths'][:][iteration] 
+        
 
     """
     iteration = int(iteration)
@@ -431,6 +436,7 @@ def get_state(walk_data, iteration=-1, verbose=True):
     yinds = []
     times = []
     flags = []
+    depths = []
     iter_exceeds_warning = 0
     # Pull out the specified value
     for ii in list(range(Np_tracer)):
@@ -439,12 +445,14 @@ def get_state(walk_data, iteration=-1, verbose=True):
             yinds.append(walk_data['yinds'][ii][iteration])
             times.append(walk_data['travel_times'][ii][iteration])
             flags.append(walk_data['island_flags'][ii][iteration])
+            depths.append(walk_data['depths'][ii][iteration])
         except IndexError:
             # If target iter exceeds walk history, return last iter
             xinds.append(walk_data['xinds'][ii][-1])
             yinds.append(walk_data['yinds'][ii][-1])
             times.append(walk_data['travel_times'][ii][-1])
             flags.append(walk_data['island_flags'][ii][-1])
+            depths.append(walk_data['depths'][ii][-1])
             iter_exceeds_warning += 1
 
     if iter_exceeds_warning > 0:
@@ -452,7 +460,7 @@ def get_state(walk_data, iteration=-1, verbose=True):
             print('Note: %s particles have not reached %s iterations' % \
                   (iter_exceeds_warning, iteration))
 
-    return xinds, yinds, times, flags
+    return xinds, yinds, times, flags, depths
 
 
 def get_time_state(walk_data, target_time, verbose=True):
@@ -563,7 +571,7 @@ def plot_exposure_time(walk_data,
     # Initialize arrays to record exposure time of each particle
     Np_tracer = len(walk_data['xinds'])  # Number of particles
     # Record final travel times
-    x, y, end_time = get_state(walk_data)
+    x, y, end_time, f, d = get_state(walk_data)
 
     # Handle the timedelta
     if timedelta == 1:
