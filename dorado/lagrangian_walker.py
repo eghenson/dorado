@@ -467,7 +467,7 @@ def steep_descent(probs):
     return idx
 
 
-def particle_stepper(Particles, current_inds, travel_times, island_flags, ROI=None):
+def particle_stepper(Particles, current_inds, travel_times, island_flags, depths, ROI=None):
     """Step particles a single iteration.
 
     **Inputs** :
@@ -484,6 +484,9 @@ def particle_stepper(Particles, current_inds, travel_times, island_flags, ROI=No
         island_flags : 'list'
             List of initial island flags for the particles
             
+        depths : 'list'
+            List of initial depths at the particle current_inds
+            
         ROI : 'np.array' , optional
             A binary raster indicating cells within a specified ROI.
             If not provided, the function will use the ROI stored
@@ -499,6 +502,9 @@ def particle_stepper(Particles, current_inds, travel_times, island_flags, ROI=No
             
         island_flags : 'list'
             List of the flags associated with the particle movements
+            
+        depths : 'list'
+            List of the depths associated with the particle movements
 
     """
     # If no ROI is explicitly passed, try to use the one stored in Particles to monitor particle movement in certain areas
@@ -544,12 +550,19 @@ def particle_stepper(Particles, current_inds, travel_times, island_flags, ROI=No
             # Ensure x, y are within the bounds of the raster (ROI)
             if (0 <= x < ROI.shape[0]) and (0 <= y < ROI.shape[1]):
             # Use the binary raster to flag particles
-                if ROI[x, y] == 1:  # Particle is within ROI (river)
+                if ROI[x, y] == 1:  # Particle is within ROI 
                     new_flags.append(1)
                 else:  # Particle is outside ROI
                     new_flags.append(0)
             else:  # If particle is outside the bounds of the raster
                 new_flags.append(0)
         island_flags = new_flags
+        
+    # Assign depth value 
+    new_depths = []
+    for (x,y) in new_inds:
+        new_depths.append(round(Particles.depth[x, y], 5))
+        
+    depths = new_depths
 
-    return new_inds, travel_times, island_flags
+    return new_inds, travel_times, island_flags, depths
