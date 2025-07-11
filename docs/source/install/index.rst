@@ -4,7 +4,7 @@
 Installation Instructions
 =========================
 
-dorado is compatible with Python 2.7, 3.6, 3.7, and 3.8. There are only 4 dependencies: `numpy <https://numpy.org/install/>`_, `matplotlib <https://matplotlib.org/3.2.2/users/installing.html>`_, `scipy <https://www.scipy.org/install.html>`_, `future <https://python-future.org/>`_, and `tqdm <https://pypi.org/project/tqdm/>`_.
+dorado is compatible with Python 3.11+. There are only 4 dependencies: `numpy <https://numpy.org/install/>`_, `matplotlib <https://matplotlib.org/3.2.2/users/installing.html>`_, `scipy <https://www.scipy.org/install.html>`_, `future <https://python-future.org/>`_, and `tqdm <https://pypi.org/project/tqdm/>`_.
 
 Installation via `pip`
 ----------------------
@@ -13,7 +13,7 @@ To `pip`-install this package, first ensure that you have the dependencies liste
 ::
 
     $ pip install pydorado
-    
+
 Installation via `conda`
 ------------------------
 
@@ -33,7 +33,7 @@ Installation from source
 2. From the cloned (or extracted) folder, run the following in the command line:
 ::
 
-   $ python setup.py install
+   $ pip install .
 
 to install the dorado package.
 
@@ -53,11 +53,16 @@ Editable installation from source
 If you'd prefer an "editable" install (meaning that any modifications you make to the code will be used when you import and run scripts), run the following in the command line after cloning the repository (instead of following the above instructions):
 ::
 
-   $ pip install -r requirements.txt
-
    $ pip install -e .
 
 The unit tests can be run (after installing `pytest` as indicated above) by typing:
 ::
 
    $ pytest
+
+If you'd like your installation to include the dependencies needed for testing and locally building the documentation, you can install the package with the following command:
+::
+
+   $ pip install -e .[dev]
+
+This should give you a "developers" installation of the package.
